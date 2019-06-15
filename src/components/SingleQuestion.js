@@ -109,7 +109,7 @@ class SingleQuestion extends Component {
           {
             question.comments &&
             question.comments.map(comment => {
-              return <Comment key={comment.id} comment={comment} />
+              return <Comment key={comment._id} comment={comment} />
             })
           }
           <p>add a comment</p>
@@ -130,7 +130,8 @@ class SingleQuestion extends Component {
           question.answers.map(answer => {
             return (
               <SingleAnswer 
-                answer={answer}  
+                answer={answer} 
+                key={answer._id} 
                 qid={this.props.match.params.id}
                 handleAnswerUpvote={this.answerUpvote}
                 handleAnswerDownvote={this.answerDownvote}

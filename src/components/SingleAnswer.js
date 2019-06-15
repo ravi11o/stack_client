@@ -32,7 +32,7 @@ const SingleAnswer = (props) => {
           {
             answer.comments && 
             answer.comments.map(comment => {
-              return <Comment comment={comment} />
+              return <Comment key={comment._id} comment={comment} />
             })
           }
           <p>add a comment</p>

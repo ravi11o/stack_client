@@ -2,7 +2,7 @@ const LOGIN_USER = 'LOGIN_USER';
 const LOGOUT_USER = 'LOGOUT_USER';
 
 const initialState = {
-  currentUser: {}
+  currentUser: null
 }
 
 const currentUserReducer = (state = initialState, action) => {

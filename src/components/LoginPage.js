@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import {Redirect} from 'react-router-dom';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 import Featured from './Featured';
@@ -58,51 +59,38 @@ class LoginContainer extends Component {
     })
   }
 
-  componentDidMount() {
-    var token = localStorage.getItem("stackApiToken");
-    if(token) {
-      fetch(`${URL}/me`, {
-        headers : {'Authorization': JSON.parse(token)}
-      })
-      .then(res => res.json())
-      .then(data => {
-        if(data.error) return this.props.history.push('/login');
-        this.props.dispatch({
-          type: 'LOGIN_USER',
-          value: data
-        })
-        this.props.history.push('/')
-      })
-    }
-  }
-
   render() {
     return (
       <div className="wrapper">
       <Navbar />
       <div className="container">
         <Sidebar />
-        <form className="signup-content" onSubmit={this.handleSubmit} >
-          <h2>Login Form</h2>   
-          <input 
-            type="email"
-            name="email"
-            value={this.state.loginUser.email}
-            onChange={this.handleChange}
-            placeholder="Email Address"
-          />
-          <input 
-            type="password"
-            name="password"
-            value={this.state.loginUser.password}
-            onChange={this.handleChange}
-            placeholder="Password"
-          />
-          <input 
-            type="submit"
-            value="Login"
-          />     
-        </form>
+        {
+          this.props.currentUser ? <Redirect to="/" /> : (
+            <form className="signup-content" onSubmit={this.handleSubmit} >
+              <h2>Login Form</h2>   
+              <input 
+                type="email"
+                name="email"
+                value={this.state.loginUser.email}
+                onChange={this.handleChange}
+                placeholder="Email Address"
+              />
+              <input 
+                type="password"
+                name="password"
+                value={this.state.loginUser.password}
+                onChange={this.handleChange}
+                placeholder="Password"
+              />
+              <input 
+                type="submit"
+                value="Login"
+              />     
+            </form>
+          )
+        }
+  
         <div className="featured">
           <Featured />
         </div>

@@ -22,7 +22,7 @@ const WelcomePage = ({ questions, loading }) => {
               <div className="questions-list">
                 {
                   questions.map(question => {
-                    return <Question question={question} />;
+                    return <Question key={question._id} question={question} />;
                   })
                 }        
               </div>
