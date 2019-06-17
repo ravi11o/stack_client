@@ -225,4 +225,9 @@ body {
   border-radius: 5px;
 }
 
+.question-comment-form {
+  display: none;
+  grid-template-columns: 1fr;
+}
+
 

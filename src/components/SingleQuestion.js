@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import SingleAnswer from './SingleAnswer';
 import Comment from './Comment';
 import { doRequestWithToken } from '../utils/auth';
@@ -10,7 +11,9 @@ class SingleQuestion extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      answer: ''
+      answer: '',
+      questionComment: '',
+      answerComment: ''
     }
     this.handleQuestionDownvote = this.handleQuestionDownvote.bind(this);
     this.answerUpvote = this.answerUpvote.bind(this);
@@ -18,6 +21,9 @@ class SingleQuestion extends Component {
     this.handleStar = this.handleStar.bind(this);
     this.handleAnswerChange = this.handleAnswerChange.bind(this);
     this.handleAnswerSubmit = this.handleAnswerSubmit.bind(this);
+    this.questionCommetHandler = this.questionCommetHandler.bind(this);
+    this.questionCommetPopup = this.questionCommetPopup.bind(this);
+    this.questionCommentSubmit = this.questionCommentSubmit.bind(this);
   }
 
   handleQuestionUpvote = () => {
@@ -81,7 +87,35 @@ class SingleQuestion extends Component {
     this.setState({answer: ''})
 
     doRequestWithToken(`${URL}/questions/${this.props.match.params.id}/answers`, 'POST', answer, (err, data) => {
-      if (err) return;
+      if (err) return alert('Login to answer');
+      this.props.dispatch({
+        type: 'SINGLE_QUESTION',
+        value: data.question
+      })
+    })
+
+  }
+
+  questionCommetPopup() {
+    console.log(this.props.currentUser);
+    if(!this.props.currentUser) {
+      return alert('Login to comment on question');
+    }
+    var commentForm = document.getElementsByClassName('question-comment-form');
+    commentForm[0].style.display = 'grid';
+  }
+
+  questionCommetHandler(e) {
+    this.setState({
+      questionComment: e.target.value
+    })
+  }
+
+  questionCommentSubmit(e) {
+    console.log(this.state.questionComment);
+    var comment = {description: this.state.questionComment}
+    doRequestWithToken(`${URL}/questions/${this.props.match.params.id}/comments`, 'POST', comment, (err, data) => {
+      if(err) return alert('Login to comment on questions');
       this.props.dispatch({
         type: 'SINGLE_QUESTION',
         value: data.question
@@ -134,7 +168,20 @@ class SingleQuestion extends Component {
               return <Comment key={comment._id} comment={comment} />
             })
           }
-          <p>add a comment</p>
+          <div className="question-comment-form">
+            <textarea 
+              onChange={this.questionCommetHandler}  
+              rows="4"
+            >
+              {this.state.questionComment}
+            </textarea>
+            <input 
+              type="submit"   
+              value="Add Comment" 
+              onClick={this.questionCommentSubmit}
+            />
+          </div>
+          <p onClick={this.questionCommetPopup}>add a comment</p>
         </div>
       </div>
       <div className="question-asnwers-wrapper">
@@ -178,4 +225,4 @@ class SingleQuestion extends Component {
   }
 }
 
-export default SingleQuestion;
+export default connect(state => ({currentUser: state.currentUser.currentUser}))(SingleQuestion);
