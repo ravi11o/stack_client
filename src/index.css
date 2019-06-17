@@ -235,4 +235,16 @@ body {
   grid-template-columns: 1fr;
 }
 
+.add-question-form {
+  display: grid;
+  grid-template-columns: 1fr;
+  width: 90%;
+  margin: auto; 
+  grid-row-gap: 15px;
+}
+
+.add-question-form input {
+  height: 40px;
+}
+
 

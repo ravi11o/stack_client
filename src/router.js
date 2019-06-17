@@ -6,6 +6,7 @@ import QuestionsList from './containers/QuestionListContainer';
 import QuestionDetails from './containers/QuestionDetailsContainer';
 import LoginPage from './components/LoginPage';
 import SignUpPage from './components/SignUpPage';
+import AddQuestion from './components/AddQuestion';
 import PrivateRoute from './components/PrivateRoute';
 var URL = 'http://localhost:4000/api/v1/users/me'
 
@@ -38,10 +39,12 @@ class Root extends Component  {
       <Router>
         <div>
           <Route exact path="/" component={QuestionsList} />
-          <Route exact path="/questions" component={QuestionsList} />
           <Route exact path="/login" component={LoginPage} />
           <Route exact path="/signup" component={SignUpPage} />
+          <Route exact path="/questions" component={QuestionsList} />
+          <PrivateRoute exact path="/questions/new/create" component={AddQuestion} />
           <Route exact path="/questions/:id" component={QuestionDetails} />
+
         </div>
       </Router>
     </Provider>

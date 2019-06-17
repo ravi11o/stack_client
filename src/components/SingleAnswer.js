@@ -32,7 +32,6 @@ class SingleAnswer extends Component {
   answerCommentSubmit() {
     var comment = {description: this.state.answerComment}
     doRequestWithToken(`${URL}/answers/${this.props.answer._id}/comments`, 'POST', comment, (err, data) => {
-      console.log(err, data);
       if(err) return alert(err.message);
       this.props.dispatch({
         type: 'SINGLE_QUESTION',
