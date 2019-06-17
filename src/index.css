@@ -230,4 +230,9 @@ body {
   grid-template-columns: 1fr;
 }
 
+.answer-comment-form {
+  display: none;
+  grid-template-columns: 1fr;
+}
+
 

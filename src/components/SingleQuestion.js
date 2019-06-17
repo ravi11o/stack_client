@@ -21,8 +21,8 @@ class SingleQuestion extends Component {
     this.handleStar = this.handleStar.bind(this);
     this.handleAnswerChange = this.handleAnswerChange.bind(this);
     this.handleAnswerSubmit = this.handleAnswerSubmit.bind(this);
-    this.questionCommetHandler = this.questionCommetHandler.bind(this);
-    this.questionCommetPopup = this.questionCommetPopup.bind(this);
+    this.questionCommentHandler = this.questionCommentHandler.bind(this);
+    this.questionCommentPopup = this.questionCommentPopup.bind(this);
     this.questionCommentSubmit = this.questionCommentSubmit.bind(this);
   }
 
@@ -96,7 +96,7 @@ class SingleQuestion extends Component {
 
   }
 
-  questionCommetPopup() {
+  questionCommentPopup() {
     console.log(this.props.currentUser);
     if(!this.props.currentUser) {
       return alert('Login to comment on question');
@@ -105,7 +105,7 @@ class SingleQuestion extends Component {
     commentForm[0].style.display = 'grid';
   }
 
-  questionCommetHandler(e) {
+  questionCommentHandler(e) {
     this.setState({
       questionComment: e.target.value
     })
@@ -170,7 +170,7 @@ class SingleQuestion extends Component {
           }
           <div className="question-comment-form">
             <textarea 
-              onChange={this.questionCommetHandler}  
+              onChange={this.questionCommentHandler}  
               rows="4"
             >
               {this.state.questionComment}
@@ -181,7 +181,7 @@ class SingleQuestion extends Component {
               onClick={this.questionCommentSubmit}
             />
           </div>
-          <p onClick={this.questionCommetPopup}>add a comment</p>
+          <p onClick={this.questionCommentPopup}>add a comment</p>
         </div>
       </div>
       <div className="question-asnwers-wrapper">
@@ -199,7 +199,7 @@ class SingleQuestion extends Component {
           question.answers.map(answer => {
             return (
               <SingleAnswer 
-                answer={answer} 
+                answer={answer}
                 key={answer._id} 
                 qid={this.props.match.params.id}
                 handleAnswerUpvote={this.answerUpvote}
