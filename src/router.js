@@ -7,7 +7,7 @@ import QuestionDetails from './containers/QuestionDetailsContainer';
 import LoginPage from './components/LoginPage';
 import SignUpPage from './components/SignUpPage';
 import PrivateRoute from './components/PrivateRoute';
-var URL = 'http://localhost:4000/api/v1/me'
+var URL = 'http://localhost:4000/api/v1/users/me'
 
 
 class Root extends Component  {
@@ -19,12 +19,12 @@ class Root extends Component  {
     var token = localStorage.getItem('stackApitoken');
     if(token) {
       fetch(URL, {
-        headers: {'Authorization': token}
+        headers: {'Authorization': JSON.parse(token)}
       })
       .then(res => res.json())
       .then(data => {
         if(data.error) return;
-        this.props.dispatch({
+        this.props.store.dispatch({
           type: 'LOGIN_USER',
           value: data
         })
@@ -41,7 +41,7 @@ class Root extends Component  {
           <Route exact path="/questions" component={QuestionsList} />
           <Route exact path="/login" component={LoginPage} />
           <Route exact path="/signup" component={SignUpPage} />
-          <PrivateRoute exact path="/questions/:id" component={QuestionDetails} />
+          <Route exact path="/questions/:id" component={QuestionDetails} />
         </div>
       </Router>
     </Provider>

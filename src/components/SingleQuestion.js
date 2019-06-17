@@ -1,22 +1,28 @@
 import React, { Component } from 'react';
 import SingleAnswer from './SingleAnswer';
 import Comment from './Comment';
+import { doRequestWithToken } from '../utils/auth';
 const URL = 'http://localhost:4000/api/v1'
+
 
 
 class SingleQuestion extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      answer: ''
+    }
     this.handleQuestionDownvote = this.handleQuestionDownvote.bind(this);
     this.answerUpvote = this.answerUpvote.bind(this);
     this.answerDownvote = this.answerDownvote.bind(this);
     this.handleStar = this.handleStar.bind(this);
+    this.handleAnswerChange = this.handleAnswerChange.bind(this);
+    this.handleAnswerSubmit = this.handleAnswerSubmit.bind(this);
   }
 
   handleQuestionUpvote = () => {
-    fetch(`${URL}/questions/${this.props.match.params.id}/upvote`, {method: 'POST'})
-    .then(res => res.json())
-    .then(data => {
+    doRequestWithToken(`${URL}/questions/${this.props.match.params.id}/upvote`, 'POST', {}, (err, data) => {
+      if(err) return alert('Login to upvote');
       this.props.dispatch({
         type: 'SINGLE_QUESTION',
         value: data.question
@@ -25,9 +31,8 @@ class SingleQuestion extends Component {
   }
 
   handleQuestionDownvote() {
-    fetch(`${URL}/questions/${this.props.match.params.id}/downvote`, {method: 'POST'})
-    .then(res => res.json())
-    .then(data => {
+    doRequestWithToken(`${URL}/questions/${this.props.match.params.id}/downvote`, 'POST', {}, (err, data) => {
+      if(err) return alert('Login to downvote');
       this.props.dispatch({
         type: 'SINGLE_QUESTION',
         value: data.question
@@ -36,9 +41,8 @@ class SingleQuestion extends Component {
   }
 
   answerUpvote(id) {
-    fetch(`${URL}/questions/${this.props.match.params.id}/answers/${id}/upvote`, {method: 'POST'})
-    .then(res => res.json())
-    .then(data => {
+    doRequestWithToken(`${URL}/questions/${this.props.match.params.id}/answers/${id}/upvote`, 'POST', {}, (err, data) => {
+      if (err) return alert('Login to upvote answer');
       this.props.dispatch({
         type: 'SINGLE_QUESTION',
         value: data.question
@@ -47,9 +51,8 @@ class SingleQuestion extends Component {
   }
 
   answerDownvote(id) {
-    fetch(`${URL}/questions/${this.props.match.params.id}/answers/${id}/downvote`, {method: 'POST'})
-    .then(res => res.json())
-    .then(data => {
+    doRequestWithToken(`${URL}/questions/${this.props.match.params.id}/answers/${id}/downvote`, 'POST', {}, (err, data) => {
+      if (err) return alert('Login to downvote answer');
       this.props.dispatch({
         type: 'SINGLE_QUESTION',
         value: data.question
@@ -58,14 +61,33 @@ class SingleQuestion extends Component {
   }
 
   handleStar() {
-    fetch(`${URL}/questions/${this.props.match.params.id}/star`, {method: 'POST'})
-    .then(res => res.json())
-    .then(data => {
+    doRequestWithToken(`${URL}/questions/${this.props.match.params.id}/star`, 'POST', {}, (err, data) => {
+      if(err) return alert('Login to star a question');
       this.props.dispatch({
         type: 'SINGLE_QUESTION',
         value: data.question
       })
     })
+  }
+
+  handleAnswerChange(e) {
+    this.setState({
+      answer: e.target.value 
+    })
+  }
+
+  handleAnswerSubmit(e) {
+    var answer = {description: this.state.answer};
+    this.setState({answer: ''})
+
+    doRequestWithToken(`${URL}/questions/${this.props.match.params.id}/answers`, 'POST', answer, (err, data) => {
+      if (err) return;
+      this.props.dispatch({
+        type: 'SINGLE_QUESTION',
+        value: data.question
+      })
+    })
+
   }
 
   render() {
@@ -141,8 +163,14 @@ class SingleQuestion extends Component {
         }
         <div className="create-answer-area">
           <h2>Your Answer</h2>
-          <textarea rows="20" className="post-answer"></textarea>
-          <button className="submit-answer">Post Your Answer</button>
+          <textarea 
+            rows="20" 
+            className="post-answer"
+            onChange={this.handleAnswerChange}
+          >
+            {this.state.answer}
+          </textarea>
+          <button className="submit-answer" onClick={this.handleAnswerSubmit}>Post Your Answer</button>
         </div>
       </div>
     </div>

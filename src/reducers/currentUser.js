@@ -12,6 +12,11 @@ const currentUserReducer = (state = initialState, action) => {
         ...state,
         currentUser: action.value
       }
+    case LOGOUT_USER : 
+      return {
+        ...state,
+        currentUser: null
+      }
         
     
     default: 
