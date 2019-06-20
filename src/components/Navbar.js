@@ -1,11 +1,18 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link, Redirect, withRouter } from  "react-router-dom"; 
+import { doRequestWithToken } from '../utils/auth';
+const URL = 'http://localhost:4000/api/v1/search'
 
 class Navbar extends Component {
   constructor(props) {
     super(props);
     this.logout = this.logout.bind(this);
+    this.state = {
+      search: ''
+    }
+    this.handleSearch = this.handleSearch.bind(this);
+    this.handleSearchSubmit = this.handleSearchSubmit.bind(this);
   }
 
   logout() {
@@ -16,13 +23,40 @@ class Navbar extends Component {
     this.props.history.push('/');
   }
 
+  handleSearch(e) {
+    this.setState({
+      search: e.target.value
+    })
+  }
+
+  handleSearchSubmit(e) {
+    if(e.key === 'Enter') {
+      fetch(`${URL}?q=${encodeURIComponent(this.state.search)}`)
+      .then(res => res.json())
+      .then(data => {
+        this.props.dispatch({
+          type: 'QUESTIONS_LIST',
+          value: data.questions
+        })
+      })
+      // this.props.history.push('/questions')
+    }
+    return;
+  }
+
   render() {
+    console.log(this.state);
     const currentUser = this.props.currentUser;
     return (
       <div className="navbar">
         <div className="logo"><h2>LOGO</h2></div>
         <div className="search-bar">
-          <input type="text" placeholder="Search.."></input>
+          <input 
+            type="text" 
+            placeholder="Search.."
+            onChange={this.handleSearch}
+            onKeyDown={this.handleSearchSubmit} 
+          />
         </div>
         {
           currentUser ?
