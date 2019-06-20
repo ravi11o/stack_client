@@ -172,6 +172,11 @@ body {
   grid-template-columns: repeat(3, 1fr);
 }
 
+answers-meta button {
+  border: none;
+  background-color: none;
+}
+
 .question-asnwers {
   display: grid;
   grid-template-columns: 1fr 11fr;
@@ -247,4 +252,20 @@ body {
   height: 40px;
 }
 
+.tags-input {
+  display: grid;
+  grid-template-columns: 300px 100px;
+}
 
+.input-tagslist {
+  display: grid;
+  grid-template-columns: repeat(4, 100px);
+}
+
+.single-tags {
+  display: flex;
+  margin: auto;
+}
+.single-tags button {
+  border: none;
+}

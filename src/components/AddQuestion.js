@@ -14,10 +14,14 @@ class AddQuestion extends Component {
         title: '',
         description: '',
         tags: []
-      }
+      },
+      tag: ''
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
+    this.handleTagChange = this.handleTagChange.bind(this);
+    this.addTagHandler = this.addTagHandler.bind(this);
+    this.HandleDeleteTag = this.HandleDeleteTag.bind(this);
   }
 
   handleChange(e) {
@@ -33,6 +37,22 @@ class AddQuestion extends Component {
     })
   }
 
+  handleTagChange(e) {
+    this.setState({tag: e.target.value})
+  }
+
+  addTagHandler(e) {
+    e.preventDefault()
+    this.setState(prevState => {
+      return {
+        question : {
+          ...prevState.question, tags: prevState.question.tags.concat(prevState.tag)
+        },
+        tag: ''
+      }
+    })
+  }
+
   handleFormSubmit(e) {
     e.preventDefault()
     const question = this.state.question;
@@ -43,7 +63,33 @@ class AddQuestion extends Component {
     })
   }
 
+  HandleDeleteTag(e, index) {
+    e.preventDefault();
+    const tags = this.state.question.tags.filter((tag, idx) => index !== idx)
+    this.setState(prevState => {
+      return {
+        question : {
+          ...prevState.question,
+          tags: prevState.question.tags.filter((tag, idx) => index !== idx)
+        }
+      }
+    })
+  }
+
   render() {
+    var tags = this.state.question.tags.map((tag, index) => {
+      return (
+        <div key={index} className="single-tags">
+          <p>{tag}</p>
+          <button
+            onClick={(e) => this.HandleDeleteTag(e, index)}
+          >
+          X
+          </button>
+        </div>
+      )
+    })
+    console.log(this.state.question);
     return (
       <div className="wrapper">
         <Navbar />
@@ -67,13 +113,20 @@ class AddQuestion extends Component {
               >
                 {this.state.question.description}
               </textarea>
-              <input 
-                type="text"
-                name="tags"
-                placeholder="Add tags.."
-                value={this.state.question.tags}
-                onChange={this.handleTagChange}
-              />
+              <div className="tags-input">
+                <input 
+                  type="text"
+                  name="tags"
+                  placeholder="Add tags.."
+                  value={this.state.tag}
+                  onChange={this.handleTagChange}
+                />
+                <button onClick={this.addTagHandler}>Add Tag</button>
+              </div>
+              
+              <div className="input-tagslist">
+                {tags}
+              </div>
               <input
                 type="submit"
                 value="Add Question"

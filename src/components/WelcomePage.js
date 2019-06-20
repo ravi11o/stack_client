@@ -34,7 +34,6 @@ const WelcomePage = ({ questions, loading }) => {
         </div>
       </div>
     </div>
-
   );
 }
 

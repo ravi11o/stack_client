@@ -8,15 +8,21 @@ exports.doRequestWithToken = (url, method = 'GET', data = {}, cb) => {
     },
     body: JSON.stringify(data)
   })
-  .then(res => res.json())
+  .then(res => res.json(res))
   .then(data => {
     console.log(data);
     if(data.error) {
       return cb(data.error, null)
     }
     if (data.name === "ValidationError" || data.name === "JsonWebTokenError") {
-      return cb(data.message, null);
+      return cb(data, null);
     }
     return cb(null, data);
   })
 };
+
+exports.fetchReputationScore = (id) => {
+  fetch(`http://localhost:4000/api/v1/users/${id}/reputation`)
+  .then(res => res.json())
+  .then(data => data.reputationScore);
+}

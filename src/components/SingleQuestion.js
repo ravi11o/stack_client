@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import SingleAnswer from './SingleAnswer';
 import Comment from './Comment';
-import { doRequestWithToken } from '../utils/auth';
+import { doRequestWithToken, fetchReputationScore } from '../utils/auth';
+import moment from 'moment';
 const URL = 'http://localhost:4000/api/v1'
 
 
@@ -24,11 +25,15 @@ class SingleQuestion extends Component {
     this.questionCommentHandler = this.questionCommentHandler.bind(this);
     this.questionCommentPopup = this.questionCommentPopup.bind(this);
     this.questionCommentSubmit = this.questionCommentSubmit.bind(this);
+    this.sortOldest = this.sortOldest.bind(this);
+    this.sortRecent = this.sortRecent.bind(this);
+    this.sortByVotes = this.sortByVotes.bind(this);
   }
 
   handleQuestionUpvote = () => {
     doRequestWithToken(`${URL}/questions/${this.props.match.params.id}/upvote`, 'POST', {}, (err, data) => {
-      if(err) return alert('Login to upvote');
+      console.log(err, data);
+      if(err) return alert(err.message);
       this.props.dispatch({
         type: 'SINGLE_QUESTION',
         value: data.question
@@ -38,7 +43,7 @@ class SingleQuestion extends Component {
 
   handleQuestionDownvote() {
     doRequestWithToken(`${URL}/questions/${this.props.match.params.id}/downvote`, 'POST', {}, (err, data) => {
-      if(err) return alert('Login to downvote');
+      if(err) return alert(err.message);
       this.props.dispatch({
         type: 'SINGLE_QUESTION',
         value: data.question
@@ -48,7 +53,7 @@ class SingleQuestion extends Component {
 
   answerUpvote(id) {
     doRequestWithToken(`${URL}/questions/${this.props.match.params.id}/answers/${id}/upvote`, 'POST', {}, (err, data) => {
-      if (err) return alert('Login to upvote answer');
+      if (err) return alert(err.message);
       this.props.dispatch({
         type: 'SINGLE_QUESTION',
         value: data.question
@@ -58,7 +63,7 @@ class SingleQuestion extends Component {
 
   answerDownvote(id) {
     doRequestWithToken(`${URL}/questions/${this.props.match.params.id}/answers/${id}/downvote`, 'POST', {}, (err, data) => {
-      if (err) return alert('Login to downvote answer');
+      if (err) return alert(err.message);
       this.props.dispatch({
         type: 'SINGLE_QUESTION',
         value: data.question
@@ -68,7 +73,7 @@ class SingleQuestion extends Component {
 
   handleStar() {
     doRequestWithToken(`${URL}/questions/${this.props.match.params.id}/star`, 'POST', {}, (err, data) => {
-      if(err) return alert('Login to star a question');
+      if(err) return alert(err.message);
       this.props.dispatch({
         type: 'SINGLE_QUESTION',
         value: data.question
@@ -84,7 +89,11 @@ class SingleQuestion extends Component {
 
   handleAnswerSubmit(e) {
     var answer = {description: this.state.answer};
-    this.setState({answer: ''})
+    this.setState(prevState => {
+      return {
+        answer: ''
+      }
+    })
 
     doRequestWithToken(`${URL}/questions/${this.props.match.params.id}/answers`, 'POST', answer, (err, data) => {
       if (err) return alert('Login to answer');
@@ -124,6 +133,42 @@ class SingleQuestion extends Component {
 
   }
 
+  sortOldest() {
+    console.log('Oldest filter');
+    fetch(`${URL}/questions/${this.props.match.params.id}?createdAt=1`)
+      .then(res => res.json())
+      .then(data => {
+        this.props.dispatch({
+          type: 'SINGLE_QUESTION',
+          value: data.question
+        })
+      })
+  }
+
+  sortRecent() {
+    console.log('active filter');
+    fetch(`${URL}/questions/${this.props.match.params.id}?updatedAt=-1`)
+      .then(res => res.json())
+      .then(data => {
+        this.props.dispatch({
+          type: 'SINGLE_QUESTION',
+          value: data.question
+        })
+      })
+  }
+
+  sortByVotes() {
+    console.log('sort by upvotes');
+    fetch(`${URL}/questions/${this.props.match.params.id}?upvote=-1`)
+      .then(res => res.json())
+      .then(data => {
+        this.props.dispatch({
+          type: 'SINGLE_QUESTION',
+          value: data.question
+        })
+      })
+  }
+
   render() {
     var question = this.props.singleQuestion;
     var tags = this.props.tags;
@@ -150,12 +195,12 @@ class SingleQuestion extends Component {
           <div className="share-edit-author">
             <p>share edit</p>
             <div className="question-author">
-              <p>{`asked ${question.createdAt}`}</p>
+              <p>{`asked ${moment(question.createdAt).fromNow()}`}</p>
               <div className="question-author-meta">
-                <img alt="a.jpg"></img>
+                <img alt={`${question.authorId && question.authorId.username}.jpg`}></img>
                 <div className="question-author-details">
                   <p>{question.authorId && question.authorId.name}</p>
-                  <p>10 *2</p>
+                  <p>{question.authorId && fetchReputationScore(question.authorId._id)}</p>
                 </div>
               </div>
               <p>New Contributor</p>
@@ -188,9 +233,9 @@ class SingleQuestion extends Component {
         <div className="question-answers-meta">
           <h2>{question.answers && `${question.answers.length} Answers`}</h2>
           <div className="answers-meta">
-            <p>active</p>
-            <p>oldest</p>
-            <p>votes</p>
+            <p onClick={this.sortRecent}>active</p>
+            <p onClick={this.sortOldest}>oldest</p>
+            <p onClick={this.sortByVotes}>votes</p>
           </div>
         </div>
         <hr />

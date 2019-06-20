@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom'
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 import Featured from './Featured';
@@ -21,7 +22,9 @@ const QuestionDetails = (props) => {
           <>
             <div className="question-title">
               <h1>{question.title}</h1>
-              <button>Ask Question</button>
+              <Link to="/questions/new/create">
+                <button>Ask Question</button>
+              </Link>
             </div>
             <hr />
             <div className="question-body">
