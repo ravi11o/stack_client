@@ -39,13 +39,11 @@ class Navbar extends Component {
           value: data.questions
         })
       })
-      // this.props.history.push('/questions')
     }
     return;
   }
 
   render() {
-    console.log(this.state);
     const currentUser = this.props.currentUser;
     return (
       <div className="navbar">

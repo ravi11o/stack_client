@@ -1,4 +1,4 @@
-exports.doRequestWithToken = (url, method = 'GET', data = {}, cb) => {
+export const doRequestWithToken = (url, method = 'GET', data = {}, cb) => {
   var token = localStorage.getItem('stackApitoken');
   fetch(url, {
     method: method,
@@ -21,8 +21,8 @@ exports.doRequestWithToken = (url, method = 'GET', data = {}, cb) => {
   })
 };
 
-exports.fetchReputationScore = (id) => {
-  fetch(`http://localhost:4000/api/v1/users/${id}/reputation`)
-  .then(res => res.json())
-  .then(data => data.reputationScore);
-}
+// export const fetchReputationScore = async (id) => {
+//   var a = await fetch(`http://localhost:4000/api/v1/users/${id}/reputation`).then((res) => res.json());
+//   console.log(a);
+//   return a.reputationScore;
+// }

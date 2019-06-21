@@ -9,7 +9,8 @@ class SingleAnswer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      answerComment: ''
+      answerComment: '',
+      showCommentPopup: false
     }
     this.answerCommentHandler = this.answerCommentHandler.bind(this);
     this.answerCommentPopup = this.answerCommentPopup.bind(this);
@@ -17,12 +18,12 @@ class SingleAnswer extends Component {
     this.verifyAnswer = this.verifyAnswer.bind(this);
   }
 
-  answerCommentPopup() {
+  answerCommentPopup(e) {
     if(!this.props.currentUser) {
       return alert('Login to comment on answers');
     }
-    var commentForm = document.getElementsByClassName('answer-comment-form');
-    commentForm[0].style.display = 'grid';
+
+    this.setState({ showCommentPopup: true });
   }
 
   answerCommentHandler(e) {
@@ -38,7 +39,9 @@ class SingleAnswer extends Component {
       this.props.dispatch({
         type: 'SINGLE_QUESTION',
         value: data.question
-      })
+      });
+
+      this.setState({ answerComment: '' });
     })
   }
 
@@ -97,12 +100,14 @@ class SingleAnswer extends Component {
                 return <Comment key={comment._id} comment={comment} />
               })
             }
-            <div className="answer-comment-form">
+            < div className = {
+              `answer-comment-form ${this.state.showCommentPopup ? ' show-form' : ''}`
+            } >
               <textarea 
-              onChange={this.answerCommentHandler}  
+              onChange={this.answerCommentHandler}
+              value = { this.state.answerComment }
               rows="4"
               >
-                {this.state.answerComment}
               </textarea>
               <input 
                 type="submit"   
@@ -110,7 +115,7 @@ class SingleAnswer extends Component {
                 onClick={this.answerCommentSubmit}
               />
             </div>
-            <p onClick={this.answerCommentPopup}>add a comment</p>
+            <p onClick={(e) => this.answerCommentPopup(e) }>add a comment</p>
           </div>
         </div>
         <hr />

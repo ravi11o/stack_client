@@ -14,7 +14,8 @@ class SingleQuestion extends Component {
     this.state = {
       answer: '',
       questionComment: '',
-      answerComment: ''
+      answerComment: '',
+      reputation: ''
     }
     this.handleQuestionDownvote = this.handleQuestionDownvote.bind(this);
     this.answerUpvote = this.answerUpvote.bind(this);
@@ -29,6 +30,19 @@ class SingleQuestion extends Component {
     this.sortRecent = this.sortRecent.bind(this);
     this.sortByVotes = this.sortByVotes.bind(this);
   }
+
+  // componentWillReceiveProps(props, nextProps) {
+  //   console.log(props, nextProps);
+  //   if (props.singleQuestion && props.singleQuestion.authorId._id) {
+  //     const fn = async () => {
+  //       var reputation = await fetchReputationScore(this.props.singleQuestion.authorId._id);
+  //       this.setState({
+  //         reputation
+  //       });
+  //     };
+  //     fn();
+  //   }
+  // }
 
   handleQuestionUpvote = () => {
     doRequestWithToken(`${URL}/questions/${this.props.match.params.id}/upvote`, 'POST', {}, (err, data) => {
@@ -134,7 +148,6 @@ class SingleQuestion extends Component {
   }
 
   sortOldest() {
-    console.log('Oldest filter');
     fetch(`${URL}/questions/${this.props.match.params.id}?createdAt=1`)
       .then(res => res.json())
       .then(data => {
@@ -146,7 +159,6 @@ class SingleQuestion extends Component {
   }
 
   sortRecent() {
-    console.log('active filter');
     fetch(`${URL}/questions/${this.props.match.params.id}?updatedAt=-1`)
       .then(res => res.json())
       .then(data => {
@@ -158,7 +170,6 @@ class SingleQuestion extends Component {
   }
 
   sortByVotes() {
-    console.log('sort by upvotes');
     fetch(`${URL}/questions/${this.props.match.params.id}?upvote=-1`)
       .then(res => res.json())
       .then(data => {
@@ -187,8 +198,8 @@ class SingleQuestion extends Component {
           <p className="describe">{question.description}</p>
           <div className="question-tagslist">
             {
-              tags.map(tag => {
-                return <p>{tag.tag.name}</p>;
+              tags.map((tag, i) => {
+                return <p key={i}>{tag.tag.name}</p>;
               })
             }
           </div>
@@ -200,7 +211,7 @@ class SingleQuestion extends Component {
                 <img alt={`${question.authorId && question.authorId.username}.jpg`}></img>
                 <div className="question-author-details">
                   <p>{question.authorId && question.authorId.name}</p>
-                  <p>{question.authorId && fetchReputationScore(question.authorId._id)}</p>
+                  <p>{question.authorId && question.authorId.reputationScore}</p>
                 </div>
               </div>
               <p>New Contributor</p>
@@ -217,8 +228,10 @@ class SingleQuestion extends Component {
             <textarea 
               onChange={this.questionCommentHandler}  
               rows="4"
+              value = {
+                this.state.questionComment
+              }
             >
-              {this.state.questionComment}
             </textarea>
             <input 
               type="submit"   
@@ -259,8 +272,10 @@ class SingleQuestion extends Component {
             rows="20" 
             className="post-answer"
             onChange={this.handleAnswerChange}
+            value = {
+              this.state.answer
+            }
           >
-            {this.state.answer}
           </textarea>
           <button className="submit-answer" onClick={this.handleAnswerSubmit}>Post Your Answer</button>
         </div>

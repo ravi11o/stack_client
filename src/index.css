@@ -240,6 +240,10 @@ answers-meta button {
   grid-template-columns: 1fr;
 }
 
+.answer-comment-form.show-form {
+  display: grid;
+}
+
 .add-question-form {
   display: grid;
   grid-template-columns: 1fr;

@@ -23,6 +23,7 @@ class QuestionsListContainer extends Component {
     fetch(`${URL}/questions`)
     .then(res => res.json())
     .then(data => {
+      console.log(data);
       this.props.dispatch({
         type: 'QUESTIONS_LIST',
         value: data.questions 
